@@ -5,7 +5,7 @@ from core.settings import DEBUG
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('currency_exchange.urls')),
+    path('currency/', include('currency_exchange.urls')),
 ]
 
 if DEBUG:
