@@ -11,3 +11,6 @@ class CurrencyAdmin(admin.ModelAdmin):
 @admin.register(Exchange)
 class ExchangeAdmin(admin.ModelAdmin):
     list_display = ('sell', 'buys', 'exchange_rate', 'timestamp')
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related('sell', 'buys')
