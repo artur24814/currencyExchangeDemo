@@ -40,8 +40,9 @@ def queryset_currencies(only_list, response, **kwargs):
                                            Q(symbol_native__icontains=filter_currency[0])).only(*only_list)
 
         # +plus filter this queryset by most frequently bought or sold currency
-        if most_frequent and most_frequent[0] == 'seles' or most_frequent[0] == 'shopping':
-            queryset = queryset.alias(nitem=Count(most_frequent[0])).order_by('-nitem')
+        if most_frequent:
+            if most_frequent[0] == 'seles' or most_frequent[0] == 'shopping':
+                queryset = queryset.alias(nitem=Count(most_frequent[0])).order_by('-nitem')
 
     # filter by most frequently bought or sold currency
     elif most_frequent:

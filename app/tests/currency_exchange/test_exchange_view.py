@@ -10,6 +10,7 @@ from currency_exchange.models import Exchange
 
 @pytest.mark.django_db()
 def test_exchange_view(api_client, currency_EUR, currency_PLN):
+    """Fetch with arguments 'pln', 'eur', with existing currency in db return exchange rate for pln to eur"""
     with CaptureQueriesContext(connection):
         response = api_client.get(reverse('currency_exchange:exchange-view', kwargs={'sell': 'pln', 'buys': 'eur'}) + '?testing=True')
 
@@ -28,7 +29,8 @@ def test_exchange_view(api_client, currency_EUR, currency_PLN):
 
 
 @pytest.mark.django_db()
-def test_exchange_view_error_currency(api_client, currency_EUR, currency_PLN):
+def test_exchange_view_error_first_currency(api_client, currency_EUR, currency_PLN):
+    """Fetch with arguments 'pl', 'eur' ('pl' wrong argument), with existing currency in db return 404"""
     with CaptureQueriesContext(connection):
         response = api_client.get(reverse('currency_exchange:exchange-view', kwargs={'sell': 'pl', 'buys': 'eur'}))
 
@@ -36,3 +38,27 @@ def test_exchange_view_error_currency(api_client, currency_EUR, currency_PLN):
 
         assert response.status_code == 404
         assert response.data == 'this (PL) currency is not available'
+
+
+@pytest.mark.django_db()
+def test_exchange_view_error_second_currency(api_client, currency_EUR, currency_PLN):
+    """Fetch with arguments 'pln', 'er' ('er' wrong argument), with existing currency in db return 404"""
+    with CaptureQueriesContext(connection):
+        response = api_client.get(reverse('currency_exchange:exchange-view', kwargs={'sell': 'pln', 'buys': 'er'}))
+
+        assert len(connection.queries) <= 3
+
+        assert response.status_code == 404
+        assert response.data == 'this (ER) currency is not available'
+
+
+@pytest.mark.django_db()
+def test_exchange_view_error_bouth_currencies(api_client, currency_EUR, currency_PLN):
+    """Fetch with arguments 'pn', 'er' ('pl' and 'er' wrong arguments), with existing currency in db return 404"""
+    with CaptureQueriesContext(connection):
+        response = api_client.get(reverse('currency_exchange:exchange-view', kwargs={'sell': 'pn', 'buys': 'er'}))
+
+        assert len(connection.queries) <= 3
+
+        assert response.status_code == 404
+        assert response.data == 'this (PN) currency is not available'
