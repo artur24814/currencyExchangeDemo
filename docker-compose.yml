@@ -45,6 +45,16 @@ services:
       - MYSQL_PASSWORD=${SQL_PASSWORD}
       - MYSQL_DATABASE=${SQL_DATABASE}
 
+  nginx:
+    build:
+      context: ./nginx
+    volumes:
+      - static_volume:/code/staticfiles
+    ports:
+      - 1337:80
+    depends_on:
+      - app
+
 volumes:
   static_volume:
   sql_data:
