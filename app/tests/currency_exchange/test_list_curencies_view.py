@@ -27,7 +27,7 @@ def test_list_currencies_simple_view(api_client, exchange_objects):
         assert len(connection.queries) <= 4
 
         assert response.status_code == 200
-        assert len(response.json()['**CURENCIES**']) == 4
+        assert len(response.json()['**CURENCIES**']) == 6
         assert len(response.json()['**EXCHANGE ACTIVITY**']) == 5
 
 
@@ -54,7 +54,7 @@ def test_list_currencies_sort_sele_currency_view(api_client, exchange_objects):
         assert len(connection.queries) <= 4
 
         assert response.status_code == 200
-        assert len(response.json()['**CURENCIES**']) == 4
+        assert len(response.json()['**CURENCIES**']) == 6
         assert response.json()['**CURENCIES**'][0]['name'] == 'Polish Zloty'
         assert len(response.json()['**EXCHANGE ACTIVITY**']) == 5
 
@@ -68,7 +68,7 @@ def test_list_currencies_sort_buying_currency_view(api_client, exchange_objects)
         assert len(connection.queries) <= 4
 
         assert response.status_code == 200
-        assert len(response.json()['**CURENCIES**']) == 4
+        assert len(response.json()['**CURENCIES**']) == 6
         assert response.json()['**CURENCIES**'][0]['name'] == 'British Pound Sterling'
         assert len(response.json()['**EXCHANGE ACTIVITY**']) == 5
 
@@ -82,7 +82,7 @@ def test_list_currencies_filter_and_sort_sele_currency_view(api_client, exchange
         assert len(connection.queries) <= 4
 
         assert response.status_code == 200
-        assert len(response.json()['**CURENCIES**']) == 2
+        assert len(response.json()['**CURENCIES**']) == 3
         assert response.json()['**CURENCIES**'][0]['name'] == 'Polish Zloty'
         assert len(response.json()['**EXCHANGE ACTIVITY**']) == 5
 
@@ -99,10 +99,10 @@ def test_list_currencies_all_activity_view(api_client, exchange_objects):
         assert len(connection.queries) <= 5
 
         assert response.status_code == 200
-        assert len(response.json()['**CURENCIES**']) == 4
+        assert len(response.json()['**CURENCIES**']) == 6
         assert response.json()['--current-page'] == 1
         assert response.json()['--pages'] == 1
-        assert len(response.json()['**EXCHANGE ACTIVITY**']) == 8
+        assert len(response.json()['**EXCHANGE ACTIVITY**']) == 9
 
 
 @pytest.mark.django_db()
@@ -117,7 +117,7 @@ def test_list_currencies_filtered_all_activity_view(api_client, exchange_objects
         assert len(connection.queries) <= 5
 
         assert response.status_code == 200
-        assert len(response.json()['**CURENCIES**']) == 4
+        assert len(response.json()['**CURENCIES**']) == 6
         assert response.json()['--current-page'] == 1
         assert response.json()['--pages'] == 1
         assert len(response.json()['**EXCHANGE ACTIVITY**']) == 4

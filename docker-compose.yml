@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py populate_currencies &&
+             cd tests &&
+             pytest &&
+             cd .. &&
+             gunicorn core.wsgi:application --bind 0.0.0.0:8080"
+    ports:
+      - 8080:8080
+    volumes:
+      - ./app:/app
+      - static_volume:/app/staticfiles
+      - /tmp/app/mysqld:/run/mysqld
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - API_CURRENCY_KEY=${API_CURRENCY_KEY}
+      - BASE_CURRENCY_URL=${BASE_CURRENCY_URL}
+      - SQL_HOST=${SQL_HOST}
+      - SQL_DATABASE=${SQL_DATABASE}
+      - SQL_USER=${SQL_USER}
+      - SQL_PASSWORD=${SQL_PASSWORD}
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    volumes:
+      - /tmp/app/mysqld:/var/run/mysqld
+      - sql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${SQL_ROOT_PASSWORD}
+      - MYSQL_USER=${SQL_USER}
+      - MYSQL_PASSWORD=${SQL_PASSWORD}
+      - MYSQL_DATABASE=${SQL_DATABASE}
+
+volumes:
+  static_volume:
+  sql_data:
